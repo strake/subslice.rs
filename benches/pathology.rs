@@ -1,6 +1,5 @@
 #![feature(test)]
-#![feature(
-    pattern, )]
+#![feature(pattern)]
 
 #![allow(unused_imports)]
 extern crate test;
@@ -12,20 +11,20 @@ extern crate odds;
 extern crate galil_seiferas;
 extern crate unchecked_index;
 
-extern crate twoway;
+extern crate subslice;
 
 #[cfg(unused)]
 macro_rules! regex {
     ($e:expr) => (::regex::Regex::new($e).unwrap());
 }
 
-pub use twoway::{Str};
+pub use subslice::{Str};
 
 use std::str::pattern::{Pattern, Searcher, ReverseSearcher};
 use test::{Bencher, black_box};
 
-use twoway::find_str as tw_find;
-use twoway::rfind_str as tw_rfind;
+use subslice::find_str as tw_find;
+use subslice::rfind_str as tw_rfind;
 
 pub fn is_prefix(text: &str, pattern: &str) -> bool {
     Str(pattern).is_prefix_of(text)
@@ -85,7 +84,7 @@ macro_rules! bench_contains_vs_tw {
                 LONG_CY,
             };
             use itertools::Itertools;
-            use twoway::TwoWaySearcher;
+            use subslice::TwoWaySearcher;
             use test::{Bencher, black_box};
             #[cfg(feature = "jetscii")]
             use jetscii::Substring;
@@ -168,7 +167,7 @@ macro_rules! bench_contains_vs_tw {
                 let haystack = black_box($hay);
                 let needle = black_box($n);
                 b.iter(|| {
-                    test::black_box(::twoway::pcmp::find(haystack.as_bytes(), needle.as_bytes()));
+                    test::black_box(::subslice::pcmp::find(haystack.as_bytes(), needle.as_bytes()));
                 });
                 b.bytes = haystack.len() as u64;
             }
@@ -178,7 +177,7 @@ macro_rules! bench_contains_vs_tw {
                 let haystack = black_box($hay);
                 let needle = black_box($n);
                 b.iter(|| {
-                    test::black_box(::twoway::bmh::find(haystack.as_bytes(), needle.as_bytes()));
+                    test::black_box(::subslice::bmh::find(haystack.as_bytes(), needle.as_bytes()));
                 });
                 b.bytes = haystack.len() as u64;
             }
@@ -194,7 +193,7 @@ macro_rules! bench_contains_vs_tw {
             }
 
             #[bench]
-            pub fn twoway_find(b: &mut Bencher) {
+            pub fn subslice_find(b: &mut Bencher) {
                 let haystack = $hay;
                 let needle = $n;
                 b.iter(|| {
@@ -232,7 +231,7 @@ macro_rules! bench_contains_vs_tw {
             }
 
             #[bench]
-            pub fn twoway_rfind(b: &mut Bencher) {
+            pub fn subslice_rfind(b: &mut Bencher) {
                 let haystack = $hay;
                 let needle = $n;
                 b.iter(|| {
@@ -258,7 +257,7 @@ macro_rules! bench_contains_vs_tw {
             */
 
             #[bench]
-            pub fn twoway_new(b: &mut Bencher) {
+            pub fn subslice_new(b: &mut Bencher) {
                 let needle = black_box($n);
                 b.iter(|| {
                     let needle = needle.as_bytes();
@@ -277,7 +276,7 @@ macro_rules! bench_contains_vs_tw {
                     let needle = test::black_box(&needle);
                     let haystack = test::black_box(&haystack);
                     let l = ::std::cmp::min(needle.len(), haystack.len());
-                    l == ::twoway::pcmp::shared_prefix(haystack.as_bytes(), needle.as_bytes())
+                    l == ::subslice::pcmp::shared_prefix(haystack.as_bytes(), needle.as_bytes())
                 });
                 b.bytes = needle.len() as u64;
             }
@@ -299,7 +298,7 @@ macro_rules! bench_contains_vs_tw {
             /*
             #[bench]
             pub fn tw_paper(b: &mut Bencher) {
-                use twoway::tw::{find_first, Str};
+                use subslice::tw::{find_first, Str};
                 let haystack = $hay;
                 let needle = $n;
                 b.iter(|| {
@@ -546,7 +545,7 @@ pub fn rfind_byte_1(b: &mut Bencher) {
     let haystack = black_box(bench_data());
     let needle = black_box('x');
     b.iter(|| {
-        let t = ::twoway::set::rfind_byte(needle as u8, &haystack);
+        let t = ::subslice::set::rfind_byte(needle as u8, &haystack);
         t
     });
     b.bytes = haystack.len() as u64;
@@ -558,7 +557,7 @@ pub fn find_byte_1(b: &mut Bencher) {
     let haystack = black_box(bench_data());
     let needle = black_box('x');
     b.iter(|| {
-        let t = ::twoway::set::find_byte(needle as u8, &haystack);
+        let t = ::subslice::set::find_byte(needle as u8, &haystack);
         t
     });
     b.bytes = haystack.len() as u64;

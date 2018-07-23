@@ -2,7 +2,7 @@
 //!
 
 extern crate memchr;
-use std::cmp;
+use core::cmp;
 
 fn bmh_skip(pat: &[u8], skip: &mut [u16; 256]) {
     let pat_skip = cmp::min(pat.len(), u16::max_value() as usize) as u16;
