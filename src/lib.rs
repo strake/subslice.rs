@@ -23,54 +23,59 @@ use core::str::pattern::{
     SearchStep,
 };
 
-/// `find_str` finds the first ocurrence of `pattern` in the `text`.
-#[inline]
-pub fn find_str(text: &str, pattern: &str) -> Option<usize> {
-    find(text.as_bytes(), pattern.as_bytes())
+mod private { pub trait Sealed {} }
+
+impl<A> private::Sealed for [A] {}
+impl private::Sealed for str {}
+
+pub trait SubsliceExt: private::Sealed {
+    fn find(&self, other: &Self) -> Option<usize>;
+    fn rfind(&self, other: &Self) -> Option<usize>;
 }
 
-/// `find_bytes` finds the first ocurrence of `pattern` in the `text`.
-pub fn find<A: Ord>(text: &[A], pattern: &[A]) -> Option<usize> {
-    if pattern.is_empty() { Some(0) }
-    else if pattern.len() == 1 { text.iter().position(|a| *a == pattern[0]) }
-    else {
-        let mut searcher = TwoWaySearcher::new(pattern, text.len());
-        let is_long = searcher.memory == usize::MAX;
-        // write out `true` and `false` cases to encourage the compiler
-        // to specialize the two cases separately.
-        if is_long {
-            searcher.next::<_, MatchOnly>(text, pattern, true).map(|t| t.0)
-        } else {
-            searcher.next::<_, MatchOnly>(text, pattern, false).map(|t| t.0)
+impl<A: Ord> SubsliceExt for [A] {
+    #[inline]
+    fn find(&self, other: &Self) -> Option<usize> {
+        if other.is_empty() { Some(0) }
+        else if other.len() == 1 { self.iter().position(|a| *a == other[0]) }
+        else {
+            let mut searcher = TwoWaySearcher::new(other, self.len());
+            let is_long = searcher.memory == usize::MAX;
+            // write out `true` and `false` cases to encourage the compiler
+            // to specialize the two cases separately.
+            if is_long {
+                searcher.next::<_, MatchOnly>(self, other, true).map(|t| t.0)
+            } else {
+                searcher.next::<_, MatchOnly>(self, other, false).map(|t| t.0)
+            }
+        }
+    }
+
+    #[inline]
+    fn rfind(&self, other: &Self) -> Option<usize> {
+        if other.is_empty() { Some(self.len()) }
+        else if other.len() == 1 { self.iter().rposition(|a| *a == other[0]) }
+        else {
+            let mut searcher = TwoWaySearcher::new(other, self.len());
+            let is_long = searcher.memory == usize::MAX;
+            // write out `true` and `false` cases to encourage the compiler
+            // to specialize the two cases separately.
+            if is_long {
+                searcher.next_back::<_, MatchOnly>(self, other, true).map(|t| t.0)
+            } else {
+                searcher.next_back::<_, MatchOnly>(self, other, false).map(|t| t.0)
+            }
         }
     }
 }
 
-/// `rfind_str` finds the last ocurrence of `pattern` in the `text`
-/// and returns the index of the start of the match.
-#[inline]
-pub fn rfind_str(text: &str, pattern: &str) -> Option<usize> {
-    rfind(text.as_bytes(), pattern.as_bytes())
-}
+impl SubsliceExt for str {
+    #[inline]
+    fn find(&self, other: &Self) -> Option<usize> { self.as_bytes().find(other.as_bytes()) }
 
-/// `rfind_bytes` finds the last ocurrence of `pattern` in the `text`,
-/// and returns the index of the start of the match.
-pub fn rfind<A: Ord>(text: &[A], pattern: &[A]) -> Option<usize> {
-    if pattern.is_empty() { Some(text.len()) }
-    else if pattern.len() == 1 { text.iter().rposition(|a| *a == pattern[0]) }
-    else {
-        let mut searcher = TwoWaySearcher::new(pattern, text.len());
-        let is_long = searcher.memory == usize::MAX;
-        // write out `true` and `false` cases to encourage the compiler
-        // to specialize the two cases separately.
-        if is_long {
-            searcher.next_back::<_, MatchOnly>(text, pattern, true).map(|t| t.0)
-        } else {
-            searcher.next_back::<_, MatchOnly>(text, pattern, false).map(|t| t.0)
-        }
-    }
+    #[inline]
+    fn rfind(&self, other: &Self) -> Option<usize> { self.as_bytes().rfind(other.as_bytes()) }
 }
-
 
 /// Dummy wrapper for &str
 #[doc(hidden)]

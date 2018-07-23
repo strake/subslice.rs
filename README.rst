@@ -6,10 +6,8 @@ Fast substring search for strings and byte strings, using the `two-way algorithm
 This is the same code as is included in Rust's libstd to “power” ``str::find(&str)``,
 but here it is exposed with some improvements:
 
-- ``twoway::find<A: Ord>(text: &[A], pattern: &[A]) -> Option<usize>``
-- ``twoway::rfind<A: Ord>(text: &[A], pattern: &[A]) -> Option<usize>``
-- ``twoway::find_str(text: &str, pattern: &str) -> Option<usize>``
-- ``twoway::rfind_str(text: &str, pattern: &str) -> Option<usize>``
+- ``subslice::SubsliceExt::find(&self, other: &Self) -> Option<usize>``
+- ``subslice::SubsliceExt::rfind(&self, other: &Self) -> Option<usize>``
 
 Interesting Links
 -----------------
