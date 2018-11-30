@@ -141,8 +141,7 @@ impl<'a, 'b> StrSearcher<'a, 'b> {
     pub fn new(haystack: &'a str, needle: &'b str) -> StrSearcher<'a, 'b> {
         if needle.is_empty() {
             StrSearcher {
-                haystack: haystack,
-                needle: needle,
+                haystack, needle,
                 searcher: StrSearcherImpl::Empty(EmptyNeedle {
                     position: 0,
                     end: haystack.len(),
@@ -152,8 +151,7 @@ impl<'a, 'b> StrSearcher<'a, 'b> {
             }
         } else {
             StrSearcher {
-                haystack: haystack,
-                needle: needle,
+                haystack, needle,
                 searcher: StrSearcherImpl::TwoWay(
                     TwoWaySearcher::new(needle.as_bytes(), haystack.len())
                 ),
@@ -418,7 +416,7 @@ impl TwoWaySearcher {
         // &v[..period]. If it is, we use "Algorithm CP1". Otherwise we use
         // "Algorithm CP2", which is optimized for when the period of the needle
         // is large.
-        if &needle[..crit_pos] == &needle[period.. period + crit_pos] {
+        if needle[..crit_pos] == needle[period.. period + crit_pos] {
             // short period case -- the period is exact
             // compute a separate critical factorization for the reversed needle
             // x = u' v' where |v'| < period(x).
@@ -433,12 +431,10 @@ impl TwoWaySearcher {
                 TwoWaySearcher::reverse_maximal_suffix(needle, period, true));
 
             TwoWaySearcher {
-                crit_pos: crit_pos,
-                crit_pos_back: crit_pos_back,
-                period: period,
+                crit_pos, crit_pos_back, period,
 
                 position: 0,
-                end: end,
+                end,
                 memory: 0,
                 memory_back: needle.len(),
             }
@@ -451,12 +447,11 @@ impl TwoWaySearcher {
             // reverse search.
 
             TwoWaySearcher {
-                crit_pos: crit_pos,
-                crit_pos_back: crit_pos,
+                crit_pos, crit_pos_back: crit_pos,
                 period: cmp::max(crit_pos, needle.len() - crit_pos) + 1,
 
                 position: 0,
-                end: end,
+                end,
                 memory: usize::MAX, // Dummy value to signify that the period is long
                 memory_back: usize::MAX,
             }
