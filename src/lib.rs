@@ -13,7 +13,6 @@ mod tw;
 pub mod bmh;
 #[cfg(feature = "test-set")]
 pub mod set;
-mod util;
 
 #[cfg(feature = "pattern")]
 use core::str::pattern::{
