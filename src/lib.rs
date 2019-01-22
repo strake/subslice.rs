@@ -28,7 +28,12 @@ impl<A> private::Sealed for [A] {}
 impl private::Sealed for str {}
 
 pub trait SubsliceExt: private::Sealed {
+    /// Find the first subslice of `self` which is equal to `other`, and return the index of its
+    /// start.
     fn find(&self, other: &Self) -> Option<usize>;
+
+    /// Find the last subslice of `self` which is equal to `other`, and return the index of its
+    /// start.
     fn rfind(&self, other: &Self) -> Option<usize>;
 }
 
