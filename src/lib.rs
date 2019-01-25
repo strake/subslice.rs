@@ -1,6 +1,8 @@
 #![cfg_attr(not(test), no_std)]
 #![cfg_attr(feature = "pattern", feature(pattern))]
 
+//! Generalization of `str::find` to both `str` and `[_]`, see [`SubsliceExt`](trait.SubsliceExt.html) for docs.
+
 #[cfg(test)]
 extern crate core;
 
