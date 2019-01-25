@@ -1,6 +1,6 @@
 [package]
 name = "subslice"
-version = "0.2.1"
+version = "0.2.2"
 authors = ["bluss", "strake"]
 description = "Fast subslice search"
 license = "MIT/Apache-2.0"
