@@ -29,13 +29,18 @@ mod private { pub trait Sealed {} }
 impl<A> private::Sealed for [A] {}
 impl private::Sealed for str {}
 
+/// Trait of types which can be searched for subsequences
 pub trait SubsliceExt: private::Sealed {
     /// Find the first subslice of `self` which is equal to `other`, and return the index of its
     /// start.
+    ///
+    /// *O*(`self.len() + other.len()`) time
     fn find(&self, other: &Self) -> Option<usize>;
 
     /// Find the last subslice of `self` which is equal to `other`, and return the index of its
     /// start.
+    ///
+    /// *O*(`self.len() + other.len()`) time
     fn rfind(&self, other: &Self) -> Option<usize>;
 }
 
