@@ -2,7 +2,7 @@
 #[macro_use] extern crate libfuzzer_sys;
 
 use std::cmp::{min, max};
-extern crate twoway;
+extern crate subslice;
 
 // This fuzzer tests that given a slice data, pick a subslice out of it
 // and check that the find_bytes function can find the correct position
@@ -23,7 +23,7 @@ fuzz_target!(|data: &[u8]| {
         let (_, data) = data.split_at(4);
         let needle = &data[first..second];
 
-        let find_result = twoway::find_bytes(data, needle);
+        let find_result = subslice::SubsliceExt::find(data, needle);
         if let Some(i) = find_result {
             assert!(i <= first, "i={} must be leq first={}", i, first);
         } else {

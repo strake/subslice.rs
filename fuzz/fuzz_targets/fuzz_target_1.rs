@@ -1,11 +1,11 @@
 #![no_main]
 #[macro_use] extern crate libfuzzer_sys;
-extern crate twoway;
+extern crate subslice;
 
 use std::mem::transmute;
 
 // This fuzzing target splits data into two parts, and asserts that
-// the result of str::find and twoway::find_str agree when passed
+// the result of str::find and subslice::SubsliceExt::find agree when passed
 // the two &str parts as their parameters.
 //
 // A precondition is that the data is valid utf-8 (fuzzer is configured to use
@@ -19,9 +19,11 @@ fuzz_target!(|data: &[u8]| {
 
         // data is ascii only. We use a transmute to not put extra
         // code into the fuzzing, we don't want to fuzz utf-8 checking etc.
-        let data: &str = unsafe { transmute(data) };
-        let needle_split = ((a << 7) | b).min(data.len());
-        let (needle, hay) = data.split_at(needle_split);
-        assert_eq!(str::find(hay, needle), twoway::find_str(hay, needle));
+        if data.iter().all(|&b| b < 0x80) {
+            let data: &str = unsafe { transmute(data) };
+            let needle_split = ((a << 7) | b).min(data.len());
+            let (needle, hay) = data.split_at(needle_split);
+            assert_eq!(str::find(hay, needle), subslice::SubsliceExt::find(hay, needle));
+        }
     }
 });
