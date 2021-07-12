@@ -6,9 +6,9 @@
 #![allow(dead_code)]
 #![cfg(test)]
 
-use std::str;
-use std::cmp::max;
-use std::ops::Index;
+use core::str;
+use core::cmp::max;
+use core::ops::Index;
 
 #[derive(Copy, Clone, Debug, PartialEq, PartialOrd)]
 pub struct Str<'a>(pub &'a [u8]);

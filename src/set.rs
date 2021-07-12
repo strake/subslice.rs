@@ -1,4 +1,4 @@
-use std::cmp;
+use core::cmp;
 
 /*
 /// Find one out of a set of bytes, max 4.
